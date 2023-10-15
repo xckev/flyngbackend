@@ -1,8 +1,8 @@
-import argparse
+#import argparse
 import google.generativeai as palm
 from flask import Flask, jsonify
 import os
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 load_dotenv()
@@ -10,20 +10,21 @@ apikey = os.getenv("apikey")
 print(apikey)
 palm.configure(api_key=apikey)
 
-@app.route('/api/people', methods=['GET'])
-def get_items():
-  return jsonify({"testfield": 69})
-
-if(__name__ == "__main__"):
-  parser = argparse.ArgumentParser()
-  #-flightnum
-  parser.add_argument("-flight", "--flightnum", help="Flight Number", required=True)
-  args = parser.parse_args()
-
-  response = palm.generate_text(prompt="Give me information about flight {}".format(args.flightnum))
+@app.route('/api/<string:flightnum>', methods=['GET'])
+def get_items(flightnum):
+  response = palm.generate_text(prompt="Give me information about flight {}".format(flightnum))
   print( "Flight Number: {} ".format(
-    args.flightnum
+    flightnum
   ))
   print(response.result)
+  return jsonify({"testfield": response.result})
+
+if(__name__ == "__main__"):
+  #parser = argparse.ArgumentParser()
+  #-flightnum
+  #parser.add_argument("-flight", "--flightnum", help="Flight Number", required=True)
+  #args = parser.parse_args()
+
   
-  app.run(host="0.0.0.0", port=8000, debug=True)
+  
+  app.run(debug=True)
