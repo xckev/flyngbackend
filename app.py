@@ -11,27 +11,35 @@ flightkey = os.getenv("flightkey")
 print(apikey)
 palm.configure(api_key=apikey)
 
+
 @app.route('/api/<string:flightnum>', methods=['GET'])
 def get_people(flightnum):
+  '''
   params = {
   'access_key': flightkey,
   'flight_iata': flightnum,
   'limit': 1
-  }
-  api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
-  api_response = api_result.json()
-  gate = api_response['departure']['gate']
+  }'''
+  #api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
+  #api_response = jsonify(api_result)
+  #print(api_response)
+
+  #gate = api_response['departure']['gate']
 
   people = requests.get("https://us-west1-festive-airway-393617.cloudfunctions.net/getgateusers")
-  print(people.json())
-  return jsonify(people)
+  #print(people["body"]["0"])
+  #toReturn = jsonify(people)
+  #toReturn.headers.add('Access-Control-Allow-Origin', '*')
+  return str(people)
 
-@app.route('/api/<string:gate1>/<string:gate2>', methods=['GET'])
+@app.route('/gates/<string:gate1>/<string:gate2>', methods=['GET'])
 def get_meet_info(gate1, gate2):
   response = palm.generate_text(prompt="Name a few good shops, restaurants, or gates for socializing in between gate {} and gate {} inside of SeaTac airport".format(gate1, gate2))
   #print( "Flight Number: {} ".format(flightnum))
   #print(response.result)
-  return jsonify({"text": response.result})
+  toReturn = jsonify({"text": response.result})
+  toReturn.headers.add('Access-Control-Allow-Origin', '*')
+  return toReturn
 '''
 @app.route('/api/<string:gate1>/<string:gate2>', methods=['GET'])
 def get_meet_info(gate1, gate2):
