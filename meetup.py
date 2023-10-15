@@ -1,11 +1,14 @@
 import requests
 
 params = {
-  'access_key': '20edea6b149ec15a66d2aaf7aa4b1d48'
+  'access_key': '48e672f24fdd4f77692fb7d4450e0ca8',
+  'dep_iata': 'SEA',
+  'limit': 25
 }
 
-#api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
-
+api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
+api_response = api_result.json()
+'''
 api_response = {
   "pagination": {
     "limit": 100,
@@ -135,16 +138,7 @@ api_response = {
       }
     }
   ]
-}
+}'''
 print(len(api_response['data']))
-for flight in api_response['data']:
-  if flight.get('live') and not flight['live']['is_ground']:
-      print('{} flight {} from {} ({}) to {} ({}) is in the air.'.format(
-        flight['airline']['name'],
-        flight['flight']['iata'],
-        flight['departure']['airport'],
-        flight['departure']['iata'],
-        flight['arrival']['airport'],
-        flight['arrival']['iata']))
-  else:
-    print("All flights landed.")
+for f in api_response['data']:
+  print(f['flight']['iata'], "departed from gate", f['departure']['gate'], "of", f['departure']['iata'], "to", f['arrival']['gate'], "of", f['arrival']['iata'], "at scheduled time", f['departure']['scheduled'])
