@@ -1,12 +1,16 @@
 import requests
+import os
+from dotenv import load_dotenv
+load_dotenv()
+flightkey = os.getenv("flightkey")
 
 params = {
-  'access_key': '48e672f24fdd4f77692fb7d4450e0ca8',
+  'access_key': flightkey,
   'dep_iata': 'SEA',
-  'limit': 25
+  'limit': 50
 }
 
-api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
+api_result = requests.get('http://api.aviationstack.com/v1/flights?access_key='+flightkey, params)
 api_response = api_result.json()
 '''
 api_response = {

@@ -47,9 +47,18 @@ def get_meet_info(gate1, gate2):
   toReturn.headers.add('Access-Control-Allow-Origin', '*')
   return toReturn
 
-@app.route('/interests/<string:interest1>/<string:interest2>', methods=['GET'])
-def get_questions(interest1, interest2):
-  response = palm.generate_text(prompt="List a few interesting questions for a person interested in {} to have a conversation with someone interested in {}. Do not include bold text in the response.".format(interest1, interest2))
+@app.route('/activities/<string:flightnum>/<string:interest>', methods=['GET'])
+def get_questions(flightnum, interest):
+  params = {
+  'access_key': flightkey,
+  'flight_iata': flightnum,
+  'limit': 1
+  }
+  api_result = requests.get('http://api.aviationstack.com/v1/flights?access_key='+flightnum, params)
+  api_response = api_result.json()
+  gate = api_response['data'][0]['arrival']['airport']
+  
+  response = palm.generate_text(prompt="List a few interesting group activities to do after landing at {} airport that align with an interest in {}.".format(flightnum, interest))
   toReturn = jsonify({"text": response.result})
   toReturn.headers.add('Access-Control-Allow-Origin', '*')
   return toReturn
