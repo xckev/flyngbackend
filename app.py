@@ -33,8 +33,7 @@ def get_gate(flightnum):
   time = api_response['data'][0]['departure']['scheduled']
   print(gate)
 
-  #people = requests.get("https://us-west1-festive-airway-393617.cloudfunctions.net/getgateusers")
-  #print(people["body"]["0"])
+
   toReturn = jsonify({"gate": gate, 'time': time})
   toReturn.headers.add('Access-Control-Allow-Origin', '*')
   return toReturn
