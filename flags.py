@@ -2,9 +2,12 @@ import argparse
 import google.generativeai as palm
 from flask import Flask, jsonify
 import os
+from dotenv import load_dotenv, dotenv_values
 
 app = Flask(__name__)
+load_dotenv()
 apikey = os.getenv("apikey")
+print(apikey)
 palm.configure(api_key=apikey)
 
 @app.route('/api/people', methods=['GET'])
