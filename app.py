@@ -56,9 +56,9 @@ def get_questions(flightnum, interest):
   }
   api_result = requests.get('http://api.aviationstack.com/v1/flights?access_key='+flightnum, params)
   api_response = api_result.json()
-  gate = api_response['data'][0]['arrival']['airport']
+  airport = api_response['data'][0]['arrival']['airport']
   
-  response = palm.generate_text(prompt="List a few interesting group activities to do after landing at {} airport that align with an interest in {}.".format(flightnum, interest))
+  response = palm.generate_text(prompt="List a few interesting group activities to do after landing at {} airport that align with an interest in {}.".format(airport, interest))
   toReturn = jsonify({"text": response.result})
   toReturn.headers.add('Access-Control-Allow-Origin', '*')
   return toReturn
