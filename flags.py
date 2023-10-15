@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 import os
 
 app = Flask(__name__)
-apikey = "AIzaSyCB6Lbog3oBWQvTkumuhILNdQMatJAjHWo"
+apikey = os.getenv("apikey")
 palm.configure(api_key=apikey)
 
 @app.route('/api/people', methods=['GET'])
