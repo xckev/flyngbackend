@@ -11,43 +11,49 @@ flightkey = os.getenv("flightkey")
 print(apikey)
 palm.configure(api_key=apikey)
 
+@app.route('/', methods=['GET'])
+def get_home():
+  toReturn = jsonify({"text": "Welcome to the Flyng backend server! API requests may be requested from this URL."})
+  toReturn.headers.add('Access-Control-Allow-Origin', '*')
+  return toReturn
 
 @app.route('/api/<string:flightnum>', methods=['GET'])
-def get_people(flightnum):
-  '''
+def get_gate(flightnum):
   params = {
   'access_key': flightkey,
   'flight_iata': flightnum,
   'limit': 1
-  }'''
-  #api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
-  #api_response = jsonify(api_result)
-  #print(api_response)
+  }
+  api_result = requests.get('http://api.aviationstack.com/v1/flights?access_key='+flightnum, params)
+  api_response = api_result.json()
+  print(api_response)
+  print(api_response['data'])
 
-  #gate = api_response['departure']['gate']
+  gate = api_response['data'][0]['departure']['gate']
+  time = api_response['data'][0]['departure']['scheduled']
+  print(gate)
 
-  people = requests.get("https://us-west1-festive-airway-393617.cloudfunctions.net/getgateusers")
+  #people = requests.get("https://us-west1-festive-airway-393617.cloudfunctions.net/getgateusers")
   #print(people["body"]["0"])
-  #toReturn = jsonify(people)
-  #toReturn.headers.add('Access-Control-Allow-Origin', '*')
-  return str(people)
+  toReturn = jsonify({"gate": gate, 'time': time})
+  toReturn.headers.add('Access-Control-Allow-Origin', '*')
+  return toReturn
 
 @app.route('/gates/<string:gate1>/<string:gate2>', methods=['GET'])
 def get_meet_info(gate1, gate2):
-  response = palm.generate_text(prompt="Name a few good shops, restaurants, or gates for socializing in between gate {} and gate {} inside of SeaTac airport".format(gate1, gate2))
-  #print( "Flight Number: {} ".format(flightnum))
-  #print(response.result)
+  response = palm.generate_text(prompt="Name a few good shops, restaurants, or gates for socializing in between gate {} and gate {} inside of SeaTac airport.".format(gate1, gate2))
+
   toReturn = jsonify({"text": response.result})
   toReturn.headers.add('Access-Control-Allow-Origin', '*')
   return toReturn
-'''
-@app.route('/api/<string:gate1>/<string:gate2>', methods=['GET'])
-def get_meet_info(gate1, gate2):
-  response = palm.generate_text(prompt="Name a few good shops, restaurants, or gates for socializing in between gate {} and gate {} inside of SeaTac airport".format(gate1, gate2))
-  #print( "Flight Number: {} ".format(flightnum))
-  #print(response.result)
-  return jsonify({"text": response.result})
-'''
+
+@app.route('/interests/<string:interest1>/<string:interest2>', methods=['GET'])
+def get_questions(interest1, interest2):
+  response = palm.generate_text(prompt="List a few interesting questions for a person interested in {} to have a conversation with someone interested in {}. Do not include bold text in the response.".format(interest1, interest2))
+  toReturn = jsonify({"text": response.result})
+  toReturn.headers.add('Access-Control-Allow-Origin', '*')
+  return toReturn
+
 if(__name__ == "__main__"):
   #parser = argparse.ArgumentParser()
   #-flightnum
